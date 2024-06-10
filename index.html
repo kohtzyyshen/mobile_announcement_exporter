@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <link href="https://fonts.googleapis.com/css2?family=Nunito+Sans:wght@400;700&display=swap" rel="stylesheet">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Announcement Exporter</title>
+    <style>
+        body {
+            font-family: 'Nunito Sans', Arial, sans-serif;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 600px;
+            margin-left: 0;
+        }
+
+        .text-field,
+        .button, .font-size-input,
+        .padding-input {
+            display: block;
+            width: 100%;
+            height: 50px;
+            margin-bottom: 30px;
+            font-size: 16px;
+        }
+
+        .description {
+            font-size: 20px;
+            margin-bottom: 15px;
+        }
+
+        ::placeholder {
+            font-size: 16px;
+            color: #888;
+        }
+
+        .announcement {
+            position: relative;
+            width: 1080px;
+            height: 1080px;
+            background: url('images/Group_256.png') no-repeat center center;
+            background-size: cover;
+            padding: 71px 71px 100px 100px;
+            box-sizing: border-box;
+            color: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+        }
+
+        .title {
+            font-size: 64px;
+            font-weight: bold;
+            margin-bottom: 104px;
+            word-wrap: break-word;
+            text-align: left;
+            color: #FFA500;
+            white-space: pre-wrap;
+        }
+
+        .content {
+            font-size: 32px;
+            word-wrap: break-word;
+            text-align: justify;
+            text-align: left;
+            color: white;
+            white-space: pre-wrap;
+        }
+
+        /* Popup Styles */
+        .popup {
+            display: none;
+            position: fixed;
+            z-index: 999;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            overflow: auto;
+            background-color: rgba(0, 0, 0, 0.5);
+            justify-content: center;
+            align-items: center;
+
+        }
+
+        .popup-content {
+            background-color: white;
+            padding: 20px;
+            border-radius: 10px;
+            text-align: left;
+            max-width: 500px;
+        }
+
+        .popup-content p {
+            font-size: 18px;
+            margin-bottom: 20px;
+
+        }
+
+        .popup-button {
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 5px;
+            cursor: pointer;
+        }
+
+        .popup-button:hover {
+            background-color: #45a049;
+        }
+    </style>
+</head>
+
+<body>
+    <!-- Popup -->
+    <div id="popup" class="popup">
+        <div class="popup-content">
+            <p>Welcome to the mobile Announcement Exporter!<br>
+                To create an announcement, follow these steps:<br>
+                1. Enter the title and content of your announcement.<br>
+                2. Adjust the font sizes and padding (optional)<br>
+                3. Click "Export as PNG" to download your announcement as an image.<br>
+                <br>
+                Please adjust the current webpage's zoom level to below 65% ('Ctrl'/'Command' + '-') for a better user experience.<br>
+
+            </p>
+            <button class="popup-button" id="popupOkButton">OK</button>
+        </div>
+    </div>
+
+    <div class="container">
+        <label class="description">Enter the title for your announcement:</label>
+        <input type="text" id="titleInput" class="text-field" placeholder="Title" >
+
+        <label class="description">Enter the content for your announcement:</label>
+        <textarea id="contentInput" class="text-field" placeholder="Content" ></textarea>
+
+        <button id="exportButton" class="button">Export as PNG</button>
+
+        <label class="description">Set the font size for the title (default 64):</label>
+        <input type="number" id="titleFontSize" class="font-size-input" placeholder="Title Font Size" value="64">
+        <label class="description">Set the font size for the content (default 24):</label>
+        <input type="number" id="contentFontSize" class="font-size-input" placeholder="Content Font Size" value="32">
+
+        <label class="description">Vertical Gap between Title and Content (in pixels):</label>
+        <input type="number" id="verticalGap" class="padding-input" value="104">
+
+        <label class="description">Padding Top (in pixels):</label>
+        <input type="number" id="paddingTop" class="padding-input" value="71">
+
+        <label class="description">Padding Bottom (in pixels):</label>
+        <input type="number" id="paddingBottom" class="padding-input" value="71">
+
+        <label class="description">Padding Left (in pixels):</label>
+        <input type="number" id="paddingLeft" class="padding-input" value="100">
+
+        <label class="description">Padding Right (in pixels):</label>
+        <input type="number" id="paddingRight" class="padding-input" value="100">
+
+    </div>
+
+    <div id="announcement" class="announcement">
+        <div id="announcementTitle" class="title">Title</div>
+        <div id="announcementContent" class="content">Content</div>
+    </div>
+
+    <script>
+        const titleInput = document.getElementById('titleInput');
+        const contentInput = document.getElementById('contentInput');
+        const exportButton = document.getElementById('exportButton');
+        const announcement = document.getElementById('announcement');
+        const announcementTitle = document.getElementById('announcementTitle');
+        const announcementContent = document.getElementById('announcementContent');
+        const titleFontSizeInput = document.getElementById('titleFontSize');
+        const contentFontSizeInput = document.getElementById('contentFontSize');
+        const verticalGapInput = document.getElementById('verticalGap');
+        const paddingTopInput = document.getElementById('paddingTop');
+        const paddingBottomInput = document.getElementById('paddingBottom');
+        const paddingLeftInput = document.getElementById('paddingLeft');
+        const paddingRightInput = document.getElementById('paddingRight');
+
+        titleInput.addEventListener('input', function () {
+            announcementTitle.textContent = titleInput.value;
+        });
+
+        contentInput.addEventListener('input', function () {
+            announcementContent.textContent = contentInput.value;
+        });
+
+        titleFontSizeInput.addEventListener('input', function () {
+            const titleFontSize = titleFontSizeInput.value + 'px';
+            announcementTitle.style.fontSize = titleFontSize;
+        });
+
+        contentFontSizeInput.addEventListener('input', function () {
+            const contentFontSize = contentFontSizeInput.value + 'px';
+            announcementContent.style.fontSize = contentFontSize;
+        });
+
+        verticalGapInput.addEventListener('input', function () {
+            const verticalGap = verticalGapInput.value + 'px';
+            announcementTitle.style.marginBottom = verticalGap;
+        });
+
+        paddingTopInput.addEventListener('input', function () {
+            const paddingTop = paddingTopInput.value + 'px';
+            announcement.style.paddingTop = paddingTop;
+        });
+
+        paddingBottomInput.addEventListener('input', function () {
+            const paddingBottom = paddingBottomInput.value + 'px';
+            announcement.style.paddingBottom = paddingBottom;
+        });
+
+        paddingLeftInput.addEventListener('input', function () {
+            const paddingLeft = paddingLeftInput.value + 'px';
+            announcement.style.paddingLeft = paddingLeft;
+        });
+
+        paddingRightInput.addEventListener('input', function () {
+            const paddingRight = paddingRightInput.value + 'px';
+            announcement.style.paddingRight = paddingRight;
+        });
+
+        exportButton.addEventListener('click', function () {
+            html2canvas(announcement, {
+                scale: 1
+            }).then(canvas => {
+                const link = document.createElement('a');
+                link.download = 'announcement.png';
+                link.href = canvas.toDataURL('image/png');
+                link.click();
+            });
+        });
+
+        // Popup functionality
+        const popup = document.getElementById('popup');
+        const popupOkButton = document.getElementById('popupOkButton');
+
+        window.onload = function () {
+            popup.style.display = 'flex';
+        }
+
+        popupOkButton.addEventListener('click', function () {
+            popup.style.display = 'none';
+        });
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/html2canvas@1.3.3/dist/html2canvas.min.js"></script>
+</body>
+
+</html>
